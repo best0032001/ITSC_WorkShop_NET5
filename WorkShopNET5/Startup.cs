@@ -1,3 +1,4 @@
+using ITSC_API_GATEWAY_LIB;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +33,7 @@ namespace WorkShopNET5
             services.AddHttpClient();
             services.AddDbContext<StoreMISPortalDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("MISPortalDB")));
             services.AddScoped<IHrStoreRepository, HrStoreRepository>();
+            services.AddITSC(Configuration);
             services.AddCors(options =>
             {
                 options.AddPolicy(name: MyAllowSpecificOrigins,
@@ -42,7 +44,13 @@ namespace WorkShopNET5
                                       .AllowAnyHeader();
                                   });
             });
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.InputFormatters.Insert(0, new ITSCInputFormatter());
+                foreach (var inputFormatter in options.InputFormatters.OfType<ITSCInputFormatter>().Where(_ => _.SupportedMediaTypes.Count == 0))
+                {
+                }
+            });
 
         }
 
