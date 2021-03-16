@@ -9,6 +9,10 @@ namespace WorkShopNET5.Model
 {
     public class StoreMISPortalDBContext : DbContext
     {
+        public StoreMISPortalDBContext(DbContextOptions<StoreMISPortalDBContext> options) : base(options)
+        {
+
+        }
         public virtual DbSet<GetAPICheckEmployeeNowByITAccount_Result> GetAPICheckEmployeeNowByITAccount_Result { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
