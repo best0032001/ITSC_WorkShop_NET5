@@ -95,6 +95,10 @@ namespace WorkShopNET5.Controllers.v1
         {
             DateTime _date = _IItscServer.GetDateITSC();
             String action = "TestController.AddTest #clickXXXXXX";
+
+
+            this.insertLog(action, "xxxxxx");
+            this.debugLog(action, "xxxxxx");
             this.beginActionITSC(action);
             try
             {
@@ -129,6 +133,38 @@ namespace WorkShopNET5.Controllers.v1
                 }
                     APIModel aPIModel = new APIModel();
                 aPIModel.data = "" + dBody.name;
+
+                return OkITSC(aPIModel, action);
+            }
+            catch (Exception ex)
+            {
+                return this.StatusErrorITSC(action, ex);
+            }
+        }
+
+        [HttpGet("v1/mail")]
+        public async Task<IActionResult> mail()
+        {
+            DateTime _date = _IItscServer.GetDateITSC();
+            String action = "TestController.mail #clickXXXXXX";
+            this.beginActionITSC(action);
+            try
+            {
+                if (!await this.checkApp())
+                {
+                    return this.UnauthorizedITSC(action);
+                }
+
+                List<IFormFile> Attachment = new List<IFormFile>();
+                Attachment = null;
+
+                String Title = "CMUMIS : xxxxxx";
+                String Subject = "แจ้งสถานะxxxxxxx";
+                String Message = "xxxxxx";
+
+                await SendEmailAsync(Title, "xxx@cmu.ac.th", Subject, Message, Attachment);
+                APIModel aPIModel = new APIModel();
+                aPIModel.data = this.cmuaccount;
 
                 return OkITSC(aPIModel, action);
             }
