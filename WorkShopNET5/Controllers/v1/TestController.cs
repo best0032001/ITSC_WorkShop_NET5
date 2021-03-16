@@ -21,5 +21,45 @@ namespace WorkShopNET5.Controllers.v1
             _hrStoreRepository = hrStoreRepository;
 
         }
+
+        public async Task<IActionResult> temp()
+        {
+            DateTime _date = _IItscServer.GetDateITSC();
+            String action = "Consent/self";
+            this.beginActionITSC(action);
+            try
+            {
+                APIModel aPIModel = new APIModel();
+                return OkITSC(aPIModel, action);
+            }
+            catch (Exception ex)
+            {
+                return this.StatusErrorITSC(action, ex);
+            }
+        }
+
+        [HttpGet("v1/Test")]
+        public async Task<IActionResult> Test()
+        {
+            DateTime _date = _IItscServer.GetDateITSC();
+            String action = "TestController.Test #clickXXXXXX";
+            this.beginActionITSC(action);
+            try
+            {
+                if (!await this.checkApp())
+                {
+                    return this.UnauthorizedITSC(action);
+                }
+
+                APIModel aPIModel = new APIModel();
+                aPIModel.data = this.cmuaccount;
+            
+                return OkITSC(aPIModel, action);
+            }
+            catch (Exception ex)
+            {
+                return this.StatusErrorITSC(action, ex);
+            }
+        }
     }
 }
