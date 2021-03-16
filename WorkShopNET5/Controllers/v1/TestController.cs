@@ -44,6 +44,7 @@ namespace WorkShopNET5.Controllers.v1
         [HttpGet("v1/Test")]
         public async Task<IActionResult> Test()
         {
+            //String IP = this.getClientIP();
             DateTime _date = _IItscServer.GetDateITSC();
             String action = "TestController.Test #clickXXXXXX";
             this.beginActionITSC(action);
@@ -81,6 +82,7 @@ namespace WorkShopNET5.Controllers.v1
                 dynamic dBody = JsonConvert.DeserializeObject<dynamic>(body);
                 APIModel aPIModel = new APIModel();
                 aPIModel.data = ""+dBody.name;
+               String IP= this.getClientIP();
 
                 return OkITSC(aPIModel, action);
             }
@@ -167,6 +169,61 @@ namespace WorkShopNET5.Controllers.v1
                 aPIModel.data = this.cmuaccount;
 
                 return OkITSC(aPIModel, action);
+            }
+            catch (Exception ex)
+            {
+                return this.StatusErrorITSC(action, ex);
+            }
+        }
+
+        [HttpGet("v1/test/{id}/self/download/{filename}")]
+        public async Task<IActionResult> getFile(string filename, int id)
+        {
+            DateTime _date = _IItscServer.GetDateITSC();
+            String action = "getFile";
+            this.beginActionITSC(action);
+
+
+          
+
+            try
+            {
+                if (await checkApp())
+                {
+
+                    APIModel aPIModel = new APIModel();
+                    String accesstoken = this._accesstoken;
+                    string cmuAcc = this.cmuaccount;
+                  //  cmuaccount มีสิทธิ์เข้าถึง file นี้ไหม
+                  //  Boolean StatusCard = await _IReqCertRepository.CheckStatusUserAccessDownloadFilebyEmail(cmuAcc, filename, id);
+                    if (false)
+                    {
+                        aPIModel.message = "Can't not Access this file";
+                        return this.StatusCodeITSC(action, 403, aPIModel);
+
+                    }
+                    
+
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "upload", filename);
+                    var memory = this.loadFile(path);
+
+                    if (!this.deleteFile(path))
+                    {
+                        aPIModel.message = "Server Error";
+                        return this.StatusCodeITSC(action, 503, aPIModel);
+                    }
+
+                    memory.Position = 0;
+                    return File(memory, ITSCGetContentType(path), Path.GetFileName(path)
+                );
+
+
+
+                }
+                else
+                {
+                    return this.UnauthorizedITSC(action);
+                }
             }
             catch (Exception ex)
             {
