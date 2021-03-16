@@ -18,6 +18,7 @@ namespace WorkShopNET5
 {
     public class Startup
     {
+        private readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -31,6 +32,16 @@ namespace WorkShopNET5
             services.AddHttpClient();
             services.AddDbContext<StoreMISPortalDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("MISPortalDB")));
             services.AddScoped<IHrStoreRepository, HrStoreRepository>();
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  builder =>
+                                  {
+                                      builder.WithOrigins("*")
+                                      .AllowAnyMethod()
+                                      .AllowAnyHeader();
+                                  });
+            });
             services.AddControllers();
 
         }
@@ -46,10 +57,27 @@ namespace WorkShopNET5
             app.UseRouting();
 
             app.UseAuthorization();
-
+            app.UseCors(MyAllowSpecificOrigins);
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+            app.Use(async (context, next) =>
+            {
+                var url = context.Request.Path.Value;
+
+                // Redirect to an external URL
+                if (url.Contains("/api/login"))
+                {
+
+                    String uri = Configuration["redirect_uri"];
+                    String oauthUrl = "" + Configuration["oauth_authorize_url"] + "?response_type=code&client_id=" + Configuration["client_id"] + "&redirect_uri=" + Configuration["redirect_uri"] + "&scope=" + Configuration["oauth_scope"];
+                    context.Response.Redirect(oauthUrl);
+                    return;   // short circuit
+                }
+
+                await next();
             });
         }
     }
