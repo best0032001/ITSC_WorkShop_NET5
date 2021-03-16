@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WorkShopNET5.Model;
+using WorkShopNET5.Model.Interface;
+using WorkShopNET5.Model.Repository;
 
 namespace WorkShopNET5
 {
@@ -28,7 +30,9 @@ namespace WorkShopNET5
         {
             services.AddHttpClient();
             services.AddDbContext<StoreMISPortalDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("MISPortalDB")));
+            services.AddScoped<IHrStoreRepository, HrStoreRepository>();
             services.AddControllers();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
