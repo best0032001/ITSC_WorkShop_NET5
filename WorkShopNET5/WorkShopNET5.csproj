@@ -7,6 +7,8 @@
 
   <ItemGroup>
 
+    <PackageReference Include="ITSC_API_GATEWAY_LIB" Version="3.0.3" />
+
     <PackageReference Include="MailKit" Version="2.8.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.2" />
     <PackageReference Include="NEST" Version="7.6.1" />
