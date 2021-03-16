@@ -1,6 +1,7 @@
 ﻿using ITSC_API_GATEWAY_LIB;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace WorkShopNET5.Controllers.v1
     public class TestController : ITSCController
     {
         private IHrStoreRepository _hrStoreRepository;
-        public TestController(IHttpClientFactory clientFactory, ITSCServer iTSCServer,  ILogger<ITSCController> logger, IHrStoreRepository hrStoreRepository)
+        public TestController(IHttpClientFactory clientFactory, ITSCServer iTSCServer, ILogger<ITSCController> logger, IHrStoreRepository hrStoreRepository)
         {
             this.loadConfig(logger, iTSCServer, clientFactory);
             _hrStoreRepository = hrStoreRepository;
@@ -53,7 +54,32 @@ namespace WorkShopNET5.Controllers.v1
 
                 APIModel aPIModel = new APIModel();
                 aPIModel.data = this.cmuaccount;
-            
+
+                return OkITSC(aPIModel, action);
+            }
+            catch (Exception ex)
+            {
+                return this.StatusErrorITSC(action, ex);
+            }
+        }
+
+        [HttpPost("v1/TestPost")]
+        public async Task<IActionResult> AddTest([FromBody] string body)
+        {
+            DateTime _date = _IItscServer.GetDateITSC();
+            String action = "TestController.AddTest #clickXXXXXX";
+            this.beginActionITSC(action);
+            try
+            {
+                if (!await this.checkApp())
+                {
+                    return this.UnauthorizedITSC(action);
+                }
+
+                dynamic dBody = JsonConvert.DeserializeObject<dynamic>(body);
+                APIModel aPIModel = new APIModel();
+                aPIModel.data = ""+dBody.name;
+
                 return OkITSC(aPIModel, action);
             }
             catch (Exception ex)
