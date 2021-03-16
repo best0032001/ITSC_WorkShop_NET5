@@ -1,9 +1,11 @@
 ﻿using ITSC_API_GATEWAY_LIB;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -79,6 +81,54 @@ namespace WorkShopNET5.Controllers.v1
                 dynamic dBody = JsonConvert.DeserializeObject<dynamic>(body);
                 APIModel aPIModel = new APIModel();
                 aPIModel.data = ""+dBody.name;
+
+                return OkITSC(aPIModel, action);
+            }
+            catch (Exception ex)
+            {
+                return this.StatusErrorITSC(action, ex);
+            }
+        }
+
+        [HttpPost("v1/TestFile")]
+        public async Task<IActionResult> AddTestFile()
+        {
+            DateTime _date = _IItscServer.GetDateITSC();
+            String action = "TestController.AddTest #clickXXXXXX";
+            this.beginActionITSC(action);
+            try
+            {
+                if (!await this.checkApp())
+                {
+                    return this.UnauthorizedITSC(action);
+                }
+                string data = Request.Form["data"];
+                dynamic dBody = JsonConvert.DeserializeObject<dynamic>(data);
+                int countFiles = Request.Form.Files.Count;
+                if (countFiles > 0)
+                {
+                    for (int filenameCount = 1; filenameCount <= countFiles; filenameCount++)
+                    {
+                        IFormFile file01 = Request.Form.Files["filename" + filenameCount];
+                        var path = Path.Combine(Directory.GetCurrentDirectory(), "upload");
+
+                        FileModel fileModel1d = this.SaveFile(path, file01, 5);
+                        if (fileModel1d.isSave)
+                        {
+                            String fileName = fileModel1d.fileName;
+                            String dbPath = fileModel1d.dbPath;
+                            String fullPath =fileModel1d.fullPath;
+
+                        }
+                        else
+                        {
+                            this.debugLog(action, fileModel1d.error);
+                            return this.StatusCodeITSC(action, 503);
+                        }
+                    }
+                }
+                    APIModel aPIModel = new APIModel();
+                aPIModel.data = "" + dBody.name;
 
                 return OkITSC(aPIModel, action);
             }
