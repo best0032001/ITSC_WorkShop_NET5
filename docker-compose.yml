@@ -1,0 +1,10 @@
+version: '3.4'
+services:
+        net5:
+                build:
+                        context: WorkShopNET5      
+                container_name: net5
+                ports:
+                        - "80:80"
+                restart: always
+
