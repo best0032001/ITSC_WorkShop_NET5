@@ -47,7 +47,7 @@ namespace WorkShopNET5.Controllers.v1
         [HttpGet("v1/notiNoLib")]
         public async Task<IActionResult> notiNoLib()
         {
-            NotiMgsView notiMgsView = new NotiMgsView();
+            NotiMgsViewDemo notiMgsView = new NotiMgsViewDemo();
             notiMgsView.appID = "xxxxxxxxxxxxxxxxxxxxxxxx";
             notiMgsView.cmuaccount = new List<string>();
             notiMgsView.cmuaccount.Add("xxxxxxxxx@cmu.ac.th");
@@ -69,18 +69,25 @@ namespace WorkShopNET5.Controllers.v1
             return Ok();
         }
     }
-    public class NotiReturnViewDemo
+    public class NotiReturnViewDemo  //ถ้าไม่ได้lib สร้างclass ตามนี้ 
     {
         
         public string cmuaccount { get; set; }
         public bool isEmail { get; set; }
     }
-    public class APIModelNotiDemo
+    public class APIModelNotiDemo //ถ้าไม่ได้lib สร้างclass ตามนี้
     {
      
 
         public List<NotiReturnViewDemo> data { get; set; }
         public string message { get; set; }
     }
+    public class NotiMgsViewDemo //ถ้าไม่ได้lib สร้างclass ตามนี้
+    {
+ 
 
+        public string appID { get; set; }
+        public List<string> cmuaccount { get; set; }
+        public string message { get; set; }
+    }
 }
