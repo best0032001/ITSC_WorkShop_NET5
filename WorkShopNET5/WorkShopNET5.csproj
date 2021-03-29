@@ -7,7 +7,7 @@
 
   <ItemGroup>
 
-    <PackageReference Include="ITSC_API_GATEWAY_LIB" Version="3.0.3" />
+    <PackageReference Include="ITSC_API_GATEWAY_LIB" Version="3.1.0" />
 
     <PackageReference Include="MailKit" Version="2.8.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.2" />
@@ -28,6 +28,7 @@
 
 
   <ItemGroup>
+    <Folder Include="Model\view\" />
     <Folder Include="upload\" />
   </ItemGroup>
 
